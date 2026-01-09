@@ -36,15 +36,23 @@ Files implemented:
 
 **Account States**: ACTIVE, WAITING_RECOVERY, SOFT_BANNED, COOLDOWN, INVALID
 
-### 🔜 Phase 2: Sora API Client - NEXT
-- [ ] Reverse engineer actual Sora endpoints
-- [ ] Cookie/token authentication 
-- [ ] Polling actual video status
-- [ ] Download video without watermark
+### ✅ Phase 2: Sora API Client (Adapter) - COMPLETE
+New files implemented:
+- `core/sora_client_interface.py` - Abstract interface
+- `core/sora_api_adapter.py` - Real API adapter  
+- `core/client_factory.py` - Mock/Real selector
+- `core/config.py` - Feature flags & kill-switch
+- `core/auth_store.py` - Secure credential storage
+- `core/telemetry.py` - Latency/error tracking
+- `tests/test_shadow_mode.py` - Shadow mode verification
+- `tests/test_canary.py` - Single job canary test
 
-### ⏳ Phase 3: GUI & Controller - FUTURE
-- [ ] PyQt/Electron GUI
-- [ ] Controller/Orchestrator pattern
+**Feature Flags** (in `~/.sora_tool/config.json`):
+- `use_real_api`: false (default OFF)
+- `shadow_mode`: true (read-only)
+- `kill_switch`: false (emergency stop)
+
+### 🔜 Phase 3: GUI & Controller - NEXT
 
 ## 🧪 How to Test
 ```bash

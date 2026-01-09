@@ -83,9 +83,16 @@ def validate_cookies(cookies: Dict[str, str]) -> List[str]:
 
 
 def _is_sora_domain(domain: str) -> bool:
-    """Check if domain is sora.com or .sora.com"""
+    """Check if domain is chatgpt.com or sora.chatgpt.com"""
     domain = domain.lower().strip()
-    return domain in ["sora.com", ".sora.com", "www.sora.com"]
+    # Valid domains for Sora cookies
+    valid_domains = [
+        ".chatgpt.com",
+        "chatgpt.com", 
+        "sora.chatgpt.com",
+        ".sora.chatgpt.com",
+    ]
+    return domain in valid_domains or domain.endswith(".chatgpt.com")
 
 
 def _is_auth_cookie(name: str) -> bool:

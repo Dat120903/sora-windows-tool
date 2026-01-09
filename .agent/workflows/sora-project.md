@@ -52,7 +52,21 @@ New files implemented:
 - `shadow_mode`: true (read-only)
 - `kill_switch`: false (emergency stop)
 
-### 🔜 Phase 3: GUI & Controller - NEXT
+### ✅ Phase 3: GUI & Controller - COMPLETE
+New files implemented:
+- `gui/controller.py` - Event-driven glue layer
+- `gui/main_window.py` - Tkinter GUI
+- `run_gui.py` - Launcher script
+
+**GUI Features**:
+- Job Queue view (ID, Status, Prompt, Retry, Account)
+- Accounts view (Status, Quota, Cooldown)
+- Real-time Log panel
+- Start / Pause / Stop controls
+- Kill switch button
+- Real API / Shadow Mode toggles
+
+### 🔜 Phase 4: Sora Endpoint Reversing - NEXT
 
 ## 🧪 How to Test
 ```bash

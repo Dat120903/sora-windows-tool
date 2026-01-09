@@ -1,98 +1,87 @@
-# Sora Automation Tool - Phase 2
+# Sora Automation Tool
 
 ## 📁 Structure
 ```
 sora_tool/
-├── core/
-│   ├── models.py              # Job & Account data
-│   ├── persistence.py         # SQLite
-│   ├── account_manager.py     # Selection logic
-│   ├── state_machine.py       # Job lifecycle
-│   ├── queue_engine.py        # FIFO queue
-│   ├── scheduler.py           # Main loop
-│   ├── mock_sora_client.py    # Phase 1 mock
-│   ├── sora_client_interface.py  # [NEW] Abstract interface
-│   ├── sora_api_adapter.py    # [NEW] Real API adapter
-│   ├── client_factory.py      # [NEW] Mock/Real selector
-│   ├── config.py              # [NEW] Feature flags
-│   ├── auth_store.py          # [NEW] Secure credential storage
-│   └── telemetry.py           # [NEW] Latency tracking
-└── tests/
-    ├── test_simulation.py     # E2E test (mock)
-    ├── test_shadow_mode.py    # [NEW] Shadow mode test
-    └── test_canary.py         # [NEW] Canary test
+├── core/                  # Phase 1 + 2 (LOCKED)
+│   ├── models.py          # Data classes
+│   ├── persistence.py     # SQLite
+│   ├── account_manager.py # Account logic
+│   ├── state_machine.py   # Job lifecycle
+│   ├── queue_engine.py    # Job queue
+│   ├── scheduler.py       # Background loop
+│   ├── mock_sora_client.py
+│   ├── sora_api_adapter.py
+│   ├── client_factory.py
+│   ├── config.py
+│   ├── auth_store.py
+│   └── telemetry.py
+├── gui/                   # Phase 3
+│   ├── controller.py      # Glue layer
+│   └── main_window.py     # Tkinter UI
+├── tests/
+│   ├── test_simulation.py
+│   ├── test_shadow_mode.py
+│   └── test_canary.py
+├── run_gui.py             # GUI launcher
+└── requirements.txt
 ```
+
+## 🚀 Quick Start
+
+### Run GUI
+```bash
+cd sora_tool
+python run_gui.py
+```
+
+### Run Tests
+```bash
+# Core engine test
+python tests/test_simulation.py
+
+# Shadow mode test
+python tests/test_shadow_mode.py
+
+# Canary test
+python tests/test_canary.py
+```
+
+## 🖥️ GUI Features
+
+| Section | Description |
+|---------|-------------|
+| **Job Queue** | View all jobs (ID, Status, Prompt, Retry, Account) |
+| **Accounts** | View accounts (Status, Quota, Cooldown) |
+| **Logs** | Real-time log output |
+| **Controls** | Start / Pause / Stop buttons |
+| **Kill Switch** | Emergency stop all operations |
+| **Toggles** | Real API / Shadow Mode |
 
 ## 🔒 Feature Flags
 
-Config file: `~/.sora_tool/config.json`
+Config: `~/.sora_tool/config.json`
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `use_real_api` | `false` | Enable real API adapter |
-| `shadow_mode` | `true` | Read-only (no create_video) |
-| `kill_switch` | `false` | Emergency stop all API calls |
-
-## 🚀 How to Enable Real API
-
-### Step 1: Shadow Mode Test (Safe)
-```bash
-python tests/test_shadow_mode.py
-```
-This tests auth/polling WITHOUT creating actual videos.
-
-### Step 2: Canary Test (1 Job)
-```bash
-python tests/test_canary.py
-```
-Runs full flow with a single job.
-
-### Step 3: Enable Programmatically
-```python
-from sora_tool.core.config import config
-
-# Enable with shadow mode (safe)
-config.enable_real_api(shadow_mode=True)
-
-# Enable full mode (careful!)
-config.enable_real_api(shadow_mode=False)
-
-# Disable (back to mock)
-config.disable_real_api()
-```
+| `use_real_api` | `false` | Use mock client |
+| `shadow_mode` | `true` | Read-only mode |
+| `kill_switch` | `false` | Emergency stop |
 
 ## 🛑 Kill Switch
 
-Emergency stop ALL real API calls:
 ```python
 from sora_tool.core.config import config
 config.activate_kill_switch()
 ```
 
-Or manually edit `~/.sora_tool/config.json`:
-```json
-{"kill_switch": true}
+Or click the **🔴 KILL SWITCH** button in GUI.
+
+## 📦 Dependencies
+
+```bash
+pip install -r requirements.txt
 ```
 
-## 🔐 Credential Storage
-
-Credentials stored in: `~/.sora_tool/auth/`
-
-```python
-from sora_tool.core.auth_store import auth_store
-
-# Save credentials
-auth_store.save_credentials("account_1", 
-    cookies={"session": "...", "token": "..."},
-    access_token="...")
-
-# Load
-creds = auth_store.load_credentials("account_1")
-```
-
-## 📊 Telemetry
-```python
-from sora_tool.core.telemetry import telemetry
-print(telemetry.get_stats())
-# {"total_requests": 10, "success_rate": 0.9, "avg_latency_ms": 250}
-```
+- `requests` (for real API adapter)
+- Tkinter (included with Python on Windows)

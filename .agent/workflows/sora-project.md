@@ -68,6 +68,13 @@ New files implemented:
 
 ### 🔜 Phase 4: Sora Endpoint Reversing - NEXT
 
+### ✅ Phase 4A: API Observation - COMPLETE
+Document: `SORA_API_OBSERVATION.md`
+- Endpoints: POST /videos, GET /videos/{id}/status, GET /content
+- Auth: Bearer tokens (API) or Session cookies (Web UI)
+- Rate limits: 429 with backoff, daily quotas
+- Error patterns documented
+
 ## 🧪 How to Test
 ```bash
 cd C:\Users\thanh\AIVideo\sora_tool

@@ -1,0 +1,16 @@
+# Sora Windows Tool
+# Byte-compiled
+__pycache__/
+*.py[cod]
+# Database
+*.db
+*.db-wal
+*.db-shm
+# Downloads
+downloads/
+# IDE
+.vscode/
+.idea/
+# Env
+.env
+venv/

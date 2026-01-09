@@ -23,8 +23,9 @@ from sora_tool.core.telemetry import telemetry
 # Account ID for testing
 TEST_ACCOUNT = "test_sora_account"
 
-# Expected cookie file location
-COOKIE_FILE = Path.home() / ".sora_tool" / "auth" / "cookies_export.json"
+# Expected cookie file location (repo/auth/cookies_export.json)
+PROJECT_ROOT = Path(__file__).parent.parent
+COOKIE_FILE = PROJECT_ROOT / "auth" / "cookies_export.json"
 
 
 def step_import_cookies():

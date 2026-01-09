@@ -37,7 +37,7 @@ class SoraApiAdapter(SoraClientInterface):
             "Origin": SORA_BASE_URL,
             "Referer": f"{SORA_BASE_URL}/",
         })
-        self._base_url = config.get("api_base_url", SORA_BASE_URL)
+        self._base_url = config.get("api_base_url") or SORA_BASE_URL
 
     def _check_kill_switch(self):
         """Raise exception if kill switch is active."""
@@ -59,7 +59,12 @@ class SoraApiAdapter(SoraClientInterface):
             raise Exception("401 Unauthorized - Session expired or invalid")
         elif response.status_code == 403:
             telemetry.end_request(request_id, endpoint, False, "403")
+            print(f"[DEBUG] 403 Response: {response.text}")
             raise Exception("403 Forbidden - Access denied")
+        elif response.status_code == 404:
+            telemetry.end_request(request_id, endpoint, False, "404")
+            print(f"[DEBUG] 404 Response: {response.text}")
+            raise Exception("404 Not Found")
         elif response.status_code == 429:
             telemetry.end_request(request_id, endpoint, False, "429")
             raise Exception("429 Too Many Requests - Rate limited")

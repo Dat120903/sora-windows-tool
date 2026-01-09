@@ -3,27 +3,29 @@
 ## 📁 Structure
 ```
 sora_tool/
-├── core/                  # Phase 1 + 2 (LOCKED)
-│   ├── models.py          # Data classes
-│   ├── persistence.py     # SQLite
-│   ├── account_manager.py # Account logic
-│   ├── state_machine.py   # Job lifecycle
-│   ├── queue_engine.py    # Job queue
-│   ├── scheduler.py       # Background loop
-│   ├── mock_sora_client.py
-│   ├── sora_api_adapter.py
-│   ├── client_factory.py
-│   ├── config.py
-│   ├── auth_store.py
-│   └── telemetry.py
-├── gui/                   # Phase 3
-│   ├── controller.py      # Glue layer
-│   └── main_window.py     # Tkinter UI
+├── core/
+│   ├── models.py              # Data classes
+│   ├── persistence.py         # SQLite
+│   ├── account_manager.py     # Account logic
+│   ├── state_machine.py       # Job lifecycle
+│   ├── queue_engine.py        # Job queue
+│   ├── scheduler.py           # Background loop
+│   ├── mock_sora_client.py    # Phase 1 mock
+│   ├── sora_api_adapter.py    # Real API adapter
+│   ├── client_factory.py      # Mock/Real selector
+│   ├── config.py              # Feature flags
+│   ├── auth_store.py          # Credential storage
+│   ├── cookie_import.py       # [NEW] Cookie parser
+│   └── telemetry.py           # Latency tracking
+├── gui/
+│   ├── controller.py          # Glue layer
+│   └── main_window.py         # Tkinter UI
 ├── tests/
-│   ├── test_simulation.py
-│   ├── test_shadow_mode.py
-│   └── test_canary.py
-├── run_gui.py             # GUI launcher
+│   ├── test_simulation.py     # E2E test (mock)
+│   ├── test_shadow_mode.py    # Shadow mode test
+│   ├── test_canary.py         # Canary test
+│   └── test_readonly_api.py   # [NEW] Real API test
+├── run_gui.py                 # GUI launcher
 └── requirements.txt
 ```
 
@@ -31,36 +33,41 @@ sora_tool/
 
 ### Run GUI
 ```bash
-cd sora_tool
 python run_gui.py
 ```
 
 ### Run Tests
 ```bash
-# Core engine test
+# Mock tests
 python tests/test_simulation.py
-
-# Shadow mode test
 python tests/test_shadow_mode.py
 
-# Canary test
-python tests/test_canary.py
+# Real API test (requires cookies)
+python tests/test_readonly_api.py
 ```
 
-## 🖥️ GUI Features
+## 🔐 Cookie Import (Phase 4B-1)
 
-| Section | Description |
-|---------|-------------|
-| **Job Queue** | View all jobs (ID, Status, Prompt, Retry, Account) |
-| **Accounts** | View accounts (Status, Quota, Cooldown) |
-| **Logs** | Real-time log output |
-| **Controls** | Start / Pause / Stop buttons |
-| **Kill Switch** | Emergency stop all operations |
-| **Toggles** | Real API / Shadow Mode |
+### Step 1: Export cookies from browser
+1. Login to sora.com
+2. Install [Cookie-Editor](https://cookie-editor.cgagnier.ca/) extension
+3. Click extension icon → Export → JSON
+4. Save file to: `~/.sora_tool/auth/cookies_export.json`
+
+### Step 2: Import cookies
+```python
+from sora_tool.core.auth_store import auth_store
+
+# Import cookies for an account
+auth_store.import_from_file("my_account", "path/to/cookies.json")
+```
+
+### Step 3: Run read-only test
+```bash
+python tests/test_readonly_api.py
+```
 
 ## 🔒 Feature Flags
-
-Config: `~/.sora_tool/config.json`
 
 | Flag | Default | Description |
 |------|---------|-------------|
@@ -75,13 +82,11 @@ from sora_tool.core.config import config
 config.activate_kill_switch()
 ```
 
-Or click the **🔴 KILL SWITCH** button in GUI.
+## 📊 Phase 4B-1 Endpoints
 
-## 📦 Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-- `requests` (for real API adapter)
-- Tkinter (included with Python on Windows)
+| Endpoint | Status | Description |
+|----------|--------|-------------|
+| `get_history` | ✅ Implemented | Get recent videos |
+| `get_status` | ✅ Implemented | Check video status |
+| `download_video` | ✅ Implemented | Download completed video |
+| `create_video` | ⏸️ Shadow only | Disabled until Phase 4B-2 |

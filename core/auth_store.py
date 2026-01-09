@@ -68,5 +68,40 @@ class SecureAuthStore:
             return None
         return creds.get("access_token")
 
+    def import_from_file(self, account_id: str, file_path: str) -> bool:
+        """
+        Import cookies from Cookie-Editor JSON export.
+        Returns True if successful, False otherwise.
+        """
+        from .cookie_import import parse_cookie_editor_json, validate_cookies, get_cookie_summary
+        
+        try:
+            cookies = parse_cookie_editor_json(file_path)
+            
+            # Validate required cookies
+            missing = validate_cookies(cookies)
+            if missing:
+                print(f"[WARNING] Missing required cookies: {missing}")
+                # Continue anyway, some operations may still work
+            
+            # Log summary (safe, no values)
+            print(get_cookie_summary(cookies))
+            
+            # Save to store
+            self.save_credentials(account_id, cookies)
+            print(f"[OK] Cookies imported for account: {account_id}")
+            return True
+            
+        except Exception as e:
+            print(f"[ERROR] Failed to import cookies: {e}")
+            return False
+
+    def has_valid_cookies(self, account_id: str) -> bool:
+        """Check if account has cookies stored."""
+        creds = self.load_credentials(account_id)
+        if not creds or not creds.get("cookies"):
+            return False
+        return len(creds["cookies"]) > 0
+
 # Singleton
 auth_store = SecureAuthStore()

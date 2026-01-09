@@ -19,8 +19,8 @@ from .config import config
 from .auth_store import auth_store
 from .telemetry import telemetry
 
-# Sora API base URL (web interface)
-SORA_BASE_URL = "https://sora.com"
+# Sora API base URL (correct domain)
+SORA_BASE_URL = "https://sora.chatgpt.com"
 
 class SoraApiAdapter(SoraClientInterface):
     """
